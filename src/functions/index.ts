@@ -1,5 +1,5 @@
 // Получить отчет за неделю
-export default function weeklyReport() {
+export function weeklyReport() {
   throw new Error('Method not implemented.')
 }
 

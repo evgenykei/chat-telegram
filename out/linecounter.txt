@@ -1,0 +1,23 @@
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.2
+-------------------------------------------------------------------------------
+count time : 2019-03-12 19:37:08
+count workspace : c:\Users\Slaye\Desktop\chat-telegram
+total files : 6
+total code lines : 159
+total comment lines : 21
+total blank lines : 34
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |            .ts|            159|             21|             34| 1.0e+2|
+   -------------------------------------------------------------------------
+src\bot\IBot.ts, code is 8, comment is 0, blank is 3.
+src\bot\NodeTelegramBot.ts, code is 59, comment is 9, blank is 11.
+src\functions\index.ts, code is 21, comment is 7, blank is 6.
+src\index.ts, code is 17, comment is 0, blank is 3.
+src\menu\menuObject.ts, code is 15, comment is 5, blank is 5.
+src\menu\Node.ts, code is 39, comment is 0, blank is 6.
+===============================================================================

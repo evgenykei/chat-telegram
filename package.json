@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "./node_modules/.bin/tsc",
-    "lint": "./node_modules/.bin/tslint"
+    "build": "tsc",
+    "lint": "tslint"
   },
   "husky": {
     "hooks": {
@@ -16,18 +16,26 @@
   },
   "lint-staged": {
     "*.ts": [
-      "./node_modules/.bin/tslint -c ./tslint.json -p ./",
+      "tslint -c ./tslint.json -p ./",
       "git add"
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.123",
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.1",
+    "@types/node-telegram-bot-api": "^0.30.4",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.5",
     "mocha": "^6.0.2",
     "rimraf": "^2.6.3",
     "tslint": "^5.13.1",
     "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "node-telegram-bot-api": "^0.30.0",
+    "node-telegram-keyboard-wrapper": "^2.0.1",
+    "rxjs": "^6.4.0"
   }
 }

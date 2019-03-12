@@ -1,0 +1,445 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.2",
+    "workspace": "c:\\Users\\Slaye\\Desktop\\chat-telegram",
+    "linecount": [
+        {
+            "version": "0.2.2",
+            "counttime": "2019-03-12 19:32:45",
+            "filesum": 34,
+            "codesum": 4468,
+            "commentsum": 79,
+            "blanksum": 870,
+            "statistics": {
+                ".json": {
+                    "code": 76,
+                    "comment": 0,
+                    "blank": 3
+                },
+                "": {
+                    "code": 61,
+                    "comment": 5,
+                    "blank": 25
+                },
+                ".md": {
+                    "code": 3,
+                    "comment": 0,
+                    "blank": 2
+                },
+                ".ts": {
+                    "code": 232,
+                    "comment": 21,
+                    "blank": 34
+                },
+                ".js": {
+                    "code": 161,
+                    "comment": 52,
+                    "blank": 0
+                },
+                ".map": {
+                    "code": 7,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".lock": {
+                    "code": 1923,
+                    "comment": 0,
+                    "blank": 396
+                },
+                ".log": {
+                    "code": 2005,
+                    "comment": 1,
+                    "blank": 410
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 25,
+                    "code": 61,
+                    "comment": 5,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 0,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "dist\\bot\\IBot.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 2,
+                    "comment": 1,
+                    "filename": "dist\\bot\\IBot.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\bot\\IBot.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 25,
+                    "comment": 0,
+                    "filename": "dist\\bot\\NodeTelegramBot.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 50,
+                    "comment": 10,
+                    "filename": "dist\\bot\\NodeTelegramBot.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\bot\\NodeTelegramBot.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "dist\\bot\\TelegrafBot.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 25,
+                    "filename": "dist\\bot\\TelegrafBot.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\bot\\TelegrafBot.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "dist\\functions\\index.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 30,
+                    "comment": 8,
+                    "filename": "dist\\functions\\index.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\functions\\index.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\index.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 21,
+                    "comment": 1,
+                    "filename": "dist\\index.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\index.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "dist\\menu\\menuObject.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 17,
+                    "comment": 6,
+                    "filename": "dist\\menu\\menuObject.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\menu\\menuObject.js.map"
+                },
+                {
+                    "blank": 0,
+                    "code": 16,
+                    "comment": 0,
+                    "filename": "dist\\menu\\Node.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 40,
+                    "comment": 1,
+                    "filename": "dist\\menu\\Node.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\menu\\Node.js.map"
+                },
+                {
+                    "blank": 1,
+                    "code": 40,
+                    "comment": 0,
+                    "filename": "package.json"
+                },
+                {
+                    "blank": 2,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "README.md"
+                },
+                {
+                    "blank": 3,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "src\\bot\\IBot.ts"
+                },
+                {
+                    "blank": 11,
+                    "code": 59,
+                    "comment": 9,
+                    "filename": "src\\bot\\NodeTelegramBot.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 21,
+                    "comment": 7,
+                    "filename": "src\\functions\\index.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "src\\index.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 15,
+                    "comment": 5,
+                    "filename": "src\\menu\\menuObject.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 39,
+                    "comment": 0,
+                    "filename": "src\\menu\\Node.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "tsconfig.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "tslint.json"
+                },
+                {
+                    "blank": 410,
+                    "code": 2005,
+                    "comment": 1,
+                    "filename": "yarn-error.log"
+                },
+                {
+                    "blank": 396,
+                    "code": 1923,
+                    "comment": 0,
+                    "filename": "yarn.lock"
+                }
+            ]
+        },
+        {
+            "version": "0.2.2",
+            "counttime": "2019-03-12 19:36:37",
+            "filesum": 1,
+            "codesum": 17,
+            "commentsum": 0,
+            "blanksum": 3,
+            "statistics": {
+                ".ts": {
+                    "code": 17,
+                    "comment": 0,
+                    "blank": 3
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 3,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "src\\index.ts"
+                }
+            ]
+        },
+        {
+            "version": "0.2.2",
+            "counttime": "2019-03-12 19:36:50",
+            "filesum": 6,
+            "codesum": 159,
+            "commentsum": 21,
+            "blanksum": 34,
+            "statistics": {
+                ".ts": {
+                    "code": 159,
+                    "comment": 21,
+                    "blank": 34
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 3,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "src\\bot\\IBot.ts"
+                },
+                {
+                    "blank": 11,
+                    "code": 59,
+                    "comment": 9,
+                    "filename": "src\\bot\\NodeTelegramBot.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 21,
+                    "comment": 7,
+                    "filename": "src\\functions\\index.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "src\\index.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 15,
+                    "comment": 5,
+                    "filename": "src\\menu\\menuObject.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 39,
+                    "comment": 0,
+                    "filename": "src\\menu\\Node.ts"
+                }
+            ]
+        },
+        {
+            "version": "0.2.2",
+            "counttime": "2019-03-12 19:37:01",
+            "filesum": 6,
+            "codesum": 159,
+            "commentsum": 21,
+            "blanksum": 34,
+            "statistics": {
+                ".ts": {
+                    "code": 159,
+                    "comment": 21,
+                    "blank": 34
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 3,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "src\\bot\\IBot.ts"
+                },
+                {
+                    "blank": 11,
+                    "code": 59,
+                    "comment": 9,
+                    "filename": "src\\bot\\NodeTelegramBot.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 21,
+                    "comment": 7,
+                    "filename": "src\\functions\\index.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "src\\index.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 15,
+                    "comment": 5,
+                    "filename": "src\\menu\\menuObject.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 39,
+                    "comment": 0,
+                    "filename": "src\\menu\\Node.ts"
+                }
+            ]
+        },
+        {
+            "version": "0.2.2",
+            "counttime": "2019-03-12 19:37:08",
+            "filesum": 6,
+            "codesum": 159,
+            "commentsum": 21,
+            "blanksum": 34,
+            "statistics": {
+                ".ts": {
+                    "code": 159,
+                    "comment": 21,
+                    "blank": 34
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 3,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "src\\bot\\IBot.ts"
+                },
+                {
+                    "blank": 11,
+                    "code": 59,
+                    "comment": 9,
+                    "filename": "src\\bot\\NodeTelegramBot.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 21,
+                    "comment": 7,
+                    "filename": "src\\functions\\index.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "src\\index.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 15,
+                    "comment": 5,
+                    "filename": "src\\menu\\menuObject.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 39,
+                    "comment": 0,
+                    "filename": "src\\menu\\Node.ts"
+                }
+            ]
+        }
+    ]
+}
