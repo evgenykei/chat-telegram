@@ -41,7 +41,7 @@ export default class NodeTelegramBot implements IBot {
     })
   }
 
-  public async answerCallbackQuery(callbackQueryId: string, text: string): Promise<void> {
+  public async answerCallbackQuery(callbackQueryId: string, text?: string): Promise<void> {
     await this.bot.answerCallbackQuery(callbackQueryId, { text })
   }
 

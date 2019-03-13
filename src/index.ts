@@ -1,17 +1,24 @@
 import * as path from 'path'
 
-import * as bluebird from 'bluebird'
+import * as fs from 'fs-extra'
+
 import IBot from './bot/IBot'
-import MenuBody from './bot/MenuBody'
 import NodeTelegramBot from './bot/NodeTelegramBot'
 import LocaleManager from './localeManager/LocaleManager'
 import { createMenu } from './menu'
 import { createDb } from './persistence/LowDb'
 
 async function initialize() {
+  // Configurate directories
+  const rootDir = path.join(__dirname, '..'),
+        dbDir = path.join(rootDir, 'db'),
+        localeDir = path.join(rootDir, 'locale')
 
-  const db: IDatabase = await createDb(path.join(__dirname, '..', 'db', 'db.json')),
-        localeManager = new LocaleManager(path.join(__dirname, '..', 'locale'), db),
+  await fs.ensureDir(dbDir)
+
+  // Initialize modules and classes
+  const db: IDatabase = await createDb(path.join(dbDir, 'db.json')),
+        localeManager = new LocaleManager(localeDir, db),
         bot: IBot = new NodeTelegramBot('754686262:AAF2MvPUmaZsOOM2okJVnp6RqKpECSMmslU'),
         menu = createMenu(localeManager),
         menuMapping = menu.includeChildrenMapping()

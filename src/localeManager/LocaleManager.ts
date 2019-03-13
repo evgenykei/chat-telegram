@@ -32,9 +32,11 @@ class LocaleManager {
     return text ? text : element
   }
 
-  public async setUserLocale(userId: number, localeName: string): Promise<void> {
+  public async setUserLocale(userId: number, localeName: string): Promise<boolean> {
     if (!this.locales[localeName]) throw new Error('Local does not exist')
+    if (await this.db.getLocale(userId) === localeName) return false
     await this.db.setLocale(userId, localeName)
+    return true
   }
 
   public async wrapNode(userId: number, node: Node): Promise<MenuBody> {
@@ -42,7 +44,7 @@ class LocaleManager {
   }
 
   private async resolveUserLocale(userId: number): Promise<string> {
-    let localeName = this.db.getLocale(userId)
+    let localeName = await this.db.getLocale(userId)
 
     if (!localeName || !this.locales[localeName]) {
       localeName = this.getDefaultLocale()

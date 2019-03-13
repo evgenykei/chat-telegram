@@ -16,8 +16,8 @@ class LowDb implements IDatabase {
     await this.db.defaults<IMainSchema>({ locales: [] }).write()
   }
 
-  public getLocale(userId: number): string | undefined {
-    const locale = this.get<ILocaleSchema>('locales', { userId })
+  public async getLocale(userId: number): Promise<string | undefined> {
+    const locale = await this.get<ILocaleSchema>('locales', { userId })
     return locale ? locale.localeName : undefined
   }
 
@@ -25,14 +25,15 @@ class LowDb implements IDatabase {
     return this.set<ILocaleSchema>('locales', { userId }, { userId, localeName })
   }
 
-  private get<T>(tableName: string, predicate: PartialDeep<T>): T | undefined {
-    return this.db.get(tableName).find(predicate).value()
+  private async get<T>(tableName: string, predicate: PartialDeep<T>): Promise<T | undefined> {
+    return await this.db.get(tableName).find<T>(predicate).value()
   }
 
   private async set<T>(tableName: string, predicate: PartialDeep<T>, obj: T): Promise<void> {
-    const table = this.db.get(tableName)
-    const record = table.find(predicate)
-    await record.value() ? await record.assign(obj).write() : table.push(obj).write()
+    if (this.db.get(tableName).find(predicate).value() !== undefined)
+      return this.db.get(tableName).find(predicate).assign(obj).write()
+    else
+      return this.db.get(tableName).push(obj).write()
   }
 }
 

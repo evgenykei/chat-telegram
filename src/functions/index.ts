@@ -47,9 +47,11 @@ export const getPresentation: IFunction = (body: MessageBody) => {
 
 // Установить язык
 export const setLanguage: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleManager) => {
-  await lm.setUserLocale(body.userId, node.id)
-  if (body.callbackQueryId)
-    await bot.answerCallbackQuery(body.callbackQueryId, await lm.getText(body.userId, 'text.languageChanged'))
-  if (node.parent)
+  const changed = await lm.setUserLocale(body.userId, node.id)
+  if (body.callbackQueryId) {
+    const text = changed ? await lm.getText(body.userId, 'text.languageChanged') : undefined
+    await bot.answerCallbackQuery(body.callbackQueryId, text)
+  }
+  if (changed && node.parent)
     await sendSubmenu(body, node.parent, bot, lm)
 }

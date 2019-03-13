@@ -84,3 +84,6 @@ typings/
 
 # Ignore built ts files
 dist/**/*
+
+# Persistence folder
+db/
