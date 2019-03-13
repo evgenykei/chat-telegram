@@ -7,6 +7,7 @@ import { fromEventPattern, Observable } from 'rxjs'
 import { filter, map, tap } from 'rxjs/operators'
 
 import IBot from './IBot'
+import MenuBody from './MenuBody'
 
 export default class NodeTelegramBot implements IBot {
   private buttonsPerRow = 3
@@ -28,19 +29,23 @@ export default class NodeTelegramBot implements IBot {
     this.bot.on('polling_error', err => console.log(err))
   }
 
-  public sendMenu(chatId: number, buttons: Array<{title: string, menuId: string}>): void {
-    this.bot.sendMessage(chatId, 'Menu', this.createInlineKeyboard(buttons).build())
+  public async sendMenu(chatId: number, buttons: MenuBody[]): Promise<void> {
+    await this.bot.sendMessage(chatId, 'Menu', this.createInlineKeyboard(buttons).build())
   }
 
-  public editMenu(chatId: number, messageId: number, buttons: Array<{title: string, menuId: string}>): void {
-    this.bot.editMessageText('Menu', {
+  public async editMenu(chatId: number, messageId: number, buttons: MenuBody[]): Promise<void> {
+    await this.bot.editMessageText('Menu', {
       chat_id: chatId,
       message_id: messageId,
       reply_markup: this.createInlineKeyboard(buttons).extract() as TelegramBot.InlineKeyboardMarkup,
     })
   }
 
-  public onText(regexp: RegExp): Observable<{chatId: number, text: string}> {
+  public async answerCallbackQuery(callbackQueryId: string, text: string): Promise<void> {
+    await this.bot.answerCallbackQuery(callbackQueryId, { text })
+  }
+
+  public onText(regexp: RegExp): Observable<MessageBody> {
     return fromEventPattern<TelegramBot.Message[]>(
       handler => this.bot.on('text', handler),
       handler => this.bot.off('text', handler),
@@ -48,27 +53,30 @@ export default class NodeTelegramBot implements IBot {
       map(result => result[0]),
       filter(message => message.from !== undefined && message.text !== undefined && regexp.test(message.text)),
       map(message => ({
-        chatId: message.from!.id,
+        chatId: message.chat.id,
         text: message.text || '',
+        userId: message.from!.id,
       })),
     )
   }
 
-  public onMenuClick(): Observable<{chatId: number, messageId: number, menuId: string}> {
+  public onMenuClick(): Observable<MessageBody> {
     return fromEventPattern<TelegramBot.CallbackQuery>(
       handler => this.bot.on('callback_query', handler),
       handler => this.bot.off('callback_query', handler),
     ).pipe(
       filter(query => query.data !== undefined && query.message !== undefined),
       map(query => ({
+        callbackQueryId: query.id,
         chatId: query.from.id,
         menuId: query.data!,
         messageId: query.message!.message_id,
+        userId: query.from.id,
       })),
     )
   }
 
-  private createInlineKeyboard(buttons: Array<{title: string, menuId: string}>): InlineKeyboard {
+  private createInlineKeyboard(buttons: MenuBody[]): InlineKeyboard {
     const keyboard = new InlineKeyboard()
     _.chunk(_.map(buttons, obj => ({
       callback_data: obj.menuId,

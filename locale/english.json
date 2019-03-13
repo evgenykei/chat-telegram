@@ -1,0 +1,20 @@
+{
+  "name": "english",
+  "title": "English 🇺🇸 🇬🇧",
+  "elements": {    
+    "button.root": "Main menu",
+    "button.back": "Back",
+    "button.analyticalReports": "Analytical reports",
+    "button.weeklyReport": "Weekly report",
+    "button.monthlyReport": "Monthly report",
+    "button.employeeServices": "Employee services",
+    "button.resetPassword": "Reset password",
+    "button.requestVacationDays": "Request vacation days",
+    "button.requestVacation": "Request vacation",
+    "button.contactSupport": "Contact support",
+    "button.presentation": "Receive presentation",
+    "button.language": "Language",
+
+    "text.languageChanged": "Language successfuly changed"
+  }
+}

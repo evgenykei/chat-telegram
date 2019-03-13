@@ -1,11 +1,13 @@
 import { Observable } from 'rxjs'
+import MenuBody from './MenuBody'
 
 interface IBot {
-  sendMenu(chatId: number, buttons: Array<{title: string, menuId: string}>): void
-  editMenu(chatId: number, messageId: number, buttons: Array<{title: string, menuId: string}>): void
+  sendMenu(chatId: number, buttons: MenuBody[]): Promise<void>
+  editMenu(chatId: number, messageId: number, buttons: MenuBody[]): Promise<void>
+  answerCallbackQuery(callbackQueryId: string, text: string): Promise<void>
 
-  onText(regexp: RegExp): Observable<{chatId: number, text: string}>
-  onMenuClick(): Observable<{chatId: number, messageId: number, menuId: string}>
+  onText(regexp: RegExp): Observable<MessageBody>
+  onMenuClick(): Observable<MessageBody>
 }
 
 export default IBot

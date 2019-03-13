@@ -1,11 +1,19 @@
+import IFunction from '../functions/IFunction'
+
 class Node {
   public readonly id: string
   public readonly title: string
   public readonly className?: string
-  public readonly action?: (args?: any[]) => void
+  public readonly action?: IFunction
   public readonly children?: Node[]
 
-  constructor(id: string, title: string, className?: string, action?: (args?: any[]) => void, children?: Node[]) {
+  private PARENT?: Node
+
+  public get parent() {
+    return this.PARENT
+  }
+
+  constructor(id: string, title: string, className?: string, action?: IFunction, children?: Node[]) {
     this.id = id
     this.title = title
     this.className = className
@@ -13,7 +21,8 @@ class Node {
     this.children = children
 
     if (children) children.forEach(child => {
-      if (child.children) child.children.unshift(new Node(this.id, 'Back'))
+      child.PARENT = this
+      if (child.children) child.children.unshift(new Node(this.id, 'button.back'))
     })
   }
 
@@ -32,13 +41,6 @@ class Node {
       if (!result[node.id]) result[node.id] = node
     })
     return result
-  }
-
-  public toSimpleObject(): {title: string, menuId: string} {
-    return {
-      menuId: this.id,
-      title: this.title,
-    }
   }
 }
 
