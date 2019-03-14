@@ -87,3 +87,6 @@ dist/**/*
 
 # Persistence folder
 db/
+
+# Configuration header file
+config/Config.d.ts

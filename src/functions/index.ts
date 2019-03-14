@@ -1,3 +1,6 @@
+import axios from 'axios'
+import * as config from 'node-config-ts'
+
 import IBot from '../bot/IBot'
 import LocaleManager from '../localeManager/LocaleManager'
 import Node from '../menu/Node'
@@ -11,13 +14,19 @@ export const sendSubmenu: IFunction = async (body: MessageBody, node: Node, bot:
 }
 
 // Получить отчет за неделю
-export const weeklyReport: IFunction = (body: MessageBody) => {
-  throw new Error('Method not implemented.')
+export const weeklyReport: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleManager) => {
+  if (body.callbackQueryId) {
+    const text = await lm.getText(body.userId, 'text.notImplemented')
+    await bot.answerCallbackQuery(body.callbackQueryId, text)
+  }
 }
 
 // Получить отчет за месяц
-export const monthlyReport: IFunction = (body: MessageBody) => {
-  throw new Error('Method not implemented.')
+export const monthlyReport: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleManager) => {
+  if (body.callbackQueryId) {
+    const text = await lm.getText(body.userId, 'text.notImplemented')
+    await bot.answerCallbackQuery(body.callbackQueryId, text)
+  }
 }
 
 // Сбросить пароль

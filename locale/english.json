@@ -15,6 +15,7 @@
     "button.presentation": "Receive presentation",
     "button.language": "Language",
 
-    "text.languageChanged": "Language successfuly changed"
+    "text.languageChanged": "Language successfuly changed",
+    "text.notImplemented": "This function is not implemented yet"
   }
 }

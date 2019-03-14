@@ -1,6 +1,7 @@
 import * as path from 'path'
 
 import * as fs from 'fs-extra'
+import { config } from 'node-config-ts'
 
 import IBot from './bot/IBot'
 import NodeTelegramBot from './bot/NodeTelegramBot'
@@ -9,17 +10,14 @@ import { createMenu } from './menu'
 import { createDb } from './persistence/LowDb'
 
 async function initialize() {
-  // Configurate directories
-  const rootDir = path.join(__dirname, '..'),
-        dbDir = path.join(rootDir, 'db'),
-        localeDir = path.join(rootDir, 'locale')
-
-  await fs.ensureDir(dbDir)
+  // Initialize directories
+  config.directories.db = path.join(__dirname, '..', config.directories.db)
+  config.directories.locale = path.join(__dirname, '..', config.directories.locale)
 
   // Initialize modules and classes
-  const db: IDatabase = await createDb(path.join(dbDir, 'db.json')),
-        localeManager = new LocaleManager(localeDir, db),
-        bot: IBot = new NodeTelegramBot('754686262:AAF2MvPUmaZsOOM2okJVnp6RqKpECSMmslU'),
+  const db: IDatabase = await createDb(config.directories.db),
+        localeManager = new LocaleManager(config.directories.locale, db),
+        bot: IBot = new NodeTelegramBot(config.telegram.apiKey),
         menu = createMenu(localeManager),
         menuMapping = menu.includeChildrenMapping()
 

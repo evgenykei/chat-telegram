@@ -13,6 +13,7 @@
     "types": ["node", "mocha"]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "./config/**/*"
   ]
 }

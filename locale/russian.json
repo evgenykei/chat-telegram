@@ -15,6 +15,7 @@
     "button.presentation": "Получить презентацию",
     "button.language": "Язык (Language)",
 
-    "text.languageChanged": "Язык успешно сменен"
+    "text.languageChanged": "Язык успешно сменен",
+    "text.notImplemented": "Данная функция пока не реализована"
   }
 }
