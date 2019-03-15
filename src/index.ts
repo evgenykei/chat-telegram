@@ -1,13 +1,14 @@
 import * as path from 'path'
 
-import * as fs from 'fs-extra'
 import { config } from 'node-config-ts'
 
 import IBot from './bot/IBot'
 import NodeTelegramBot from './bot/NodeTelegramBot'
-import LocaleManager from './localeManager/LocaleManager'
 import { createMenu } from './menu'
 import { createDb } from './persistence/LowDb'
+import Access from './services/auth/Access'
+import AuthService from './services/auth/AuthService'
+import LocaleService from './services/locale/LocaleService'
 
 async function initialize() {
   // Initialize directories
@@ -16,27 +17,41 @@ async function initialize() {
 
   // Initialize modules and classes
   const db: IDatabase = await createDb(config.directories.db),
-        localeManager = new LocaleManager(config.directories.locale, db),
-        bot: IBot = new NodeTelegramBot(config.telegram.apiKey),
-        menu = createMenu(localeManager),
+        localeService = new LocaleService(config.directories.locale, config.general.defaultLocale, db),
+        authService = new AuthService(db, localeService),
+        bot: IBot = new NodeTelegramBot(config.telegram.apiKey, localeService, authService),
+        menu = createMenu(localeService),
         menuMapping = menu.includeChildrenMapping()
 
   // Configure bot
   if (!menu.children) throw new Error('Menu is empty')
-  bot.onText(/\/inlineKeyboard/i).subscribe(async result => {
+
+  bot.onText(/\/start/i, Access.any).subscribe(async body => {
     try {
-      const menuBodies = await Promise.all(menu.children!.map(child => localeManager.wrapNode(result.userId, child)))
-      if (menu.children) bot.sendMenu(result.chatId, menuBodies)
+      // check API for chatId
+      if (false) await bot.sendText(body.chatId, 'text.forbidden')
+      else {
+        await authService.register(body.chatId)
+        await bot.sendText(body.chatId, 'text.welcome')
+      }
     } catch (err) {
       console.error(err)
     }
   })
 
-  bot.onMenuClick().subscribe(result => {
+  bot.onText(/\/menu/i, Access.auth).subscribe(async body => {
     try {
-      if (!result.menuId) return
-      const node = menuMapping[result.menuId]
-      if (node.action) node.action(result, node, bot, localeManager)
+      await bot.createMenu(body.chatId, 'text.menu', menu.children!)
+    } catch (err) {
+      console.error(err)
+    }
+  })
+
+  bot.onMenuClick(Access.auth).subscribe(async body => {
+    try {
+      if (!body.menuId) return
+      const node = menuMapping[body.menuId]
+      if (node.action) node.action(body, node, bot, localeService)
     } catch (err) {
       console.error(err)
     }

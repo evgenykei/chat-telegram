@@ -2,65 +2,64 @@ import axios from 'axios'
 import * as config from 'node-config-ts'
 
 import IBot from '../bot/IBot'
-import LocaleManager from '../localeManager/LocaleManager'
 import Node from '../menu/Node'
+import LocaleService from '../services/locale/LocaleService'
 import IFunction from './IFunction'
 
 // Отправить подменю
-export const sendSubmenu: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleManager) => {
+export const sendSubmenu: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
   if (!body.messageId || !node.children) return
-  const menuBodies = await Promise.all(node.children.map(child => lm.wrapNode(body.userId, child)))
-  bot.editMenu(body.chatId, body.messageId, menuBodies)
+  bot.updateMenu(body.chatId, body.messageId, node.children)
 }
 
 // Получить отчет за неделю
-export const weeklyReport: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleManager) => {
-  if (body.callbackQueryId) {
-    const text = await lm.getText(body.userId, 'text.notImplemented')
-    await bot.answerCallbackQuery(body.callbackQueryId, text)
-  }
+export const weeklyReport: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
+  if (!body.callbackQueryId) return
+  await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, 'text.notImplemented')
 }
 
 // Получить отчет за месяц
-export const monthlyReport: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleManager) => {
-  if (body.callbackQueryId) {
-    const text = await lm.getText(body.userId, 'text.notImplemented')
-    await bot.answerCallbackQuery(body.callbackQueryId, text)
-  }
+export const monthlyReport: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
+  if (!body.callbackQueryId) return
+  await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, 'text.notImplemented')
 }
 
 // Сбросить пароль
-export const resetPassword: IFunction = (body: MessageBody) => {
-  throw new Error('Method not implemented.')
+export const resetPassword: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
+  if (!body.callbackQueryId) return
+  await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, 'text.notImplemented')
 }
 
 // Запросить количество дней отпуска
-export const requestVacationDays: IFunction = (body: MessageBody) => {
-  throw new Error('Method not implemented.')
+export const requestVacationDays: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
+  if (!body.callbackQueryId) return
+  await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, 'text.notImplemented')
 }
 
 // Отправить заявку на отпуск
-export const requestVacation: IFunction = (body: MessageBody) => {
-  throw new Error('Method not implemented.')
+export const requestVacation: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
+  if (!body.callbackQueryId) return
+  await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, 'text.notImplemented')
 }
 
 // Обратиться в службу поддержки
-export const contactSupport: IFunction = (body: MessageBody) => {
-  throw new Error('Method not implemented.')
+export const contactSupport: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
+  if (!body.callbackQueryId) return
+  await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, 'text.notImplemented')
 }
 
 // Получить презентацию
-export const getPresentation: IFunction = (body: MessageBody) => {
-  throw new Error('Method not implemented.')
+export const getPresentation: IFunction = async (body: MessageBody, node: Node, bot: IBot) => {
+  if (!body.callbackQueryId) return
+  await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, 'text.notImplemented')
 }
 
 // Установить язык
-export const setLanguage: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleManager) => {
-  const changed = await lm.setUserLocale(body.userId, node.id)
-  if (body.callbackQueryId) {
-    const text = changed ? await lm.getText(body.userId, 'text.languageChanged') : undefined
-    await bot.answerCallbackQuery(body.callbackQueryId, text)
-  }
+export const setLanguage: IFunction = async (body: MessageBody, node: Node, bot: IBot, lm: LocaleService) => {
+  const changed = await lm.setChatLocale(body.chatId, node.id)
+
+  if (body.callbackQueryId)
+    await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, changed ? 'text.languageChanged' : undefined)
   if (changed && node.parent)
     await sendSubmenu(body, node.parent, bot, lm)
 }

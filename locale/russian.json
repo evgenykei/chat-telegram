@@ -15,6 +15,9 @@
     "button.presentation": "Получить презентацию",
     "button.language": "Язык (Language)",
 
+    "text.welcome": "Добро пожаловать в SAPbot",
+    "text.forbidden": "У вас нет доступа к этому боту",
+    "text.menu": "Выберите пункт меню",
     "text.languageChanged": "Язык успешно сменен",
     "text.notImplemented": "Данная функция пока не реализована"
   }

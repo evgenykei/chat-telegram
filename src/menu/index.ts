@@ -1,10 +1,10 @@
 import * as _ from 'lodash'
 
 import * as functions from '../functions'
-import LocaleManager from '../localeManager/LocaleManager'
+import LocaleService from '../services/locale/LocaleService'
 import Node from './Node'
 
-export function createMenu(localeManager: LocaleManager): Node {
+export function createMenu(localeService: LocaleService): Node {
   // Root
   return new Node('root', 'button.root', 'MAINMENU', functions.sendSubmenu, [
     // Analytical reports
@@ -28,7 +28,7 @@ export function createMenu(localeManager: LocaleManager): Node {
 
     // Language
     new Node('language', 'button.language', undefined, functions.sendSubmenu,
-      _.values(localeManager.locales)
+      _.values(localeService.locales)
         .map(locale => new Node(locale.name, locale.title, undefined, functions.setLanguage))),
   ])
 }

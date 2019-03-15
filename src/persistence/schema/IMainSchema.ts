@@ -1,3 +1,0 @@
-interface IMainSchema {
-  locales: ILocaleSchema[]
-}

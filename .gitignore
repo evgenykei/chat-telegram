@@ -83,7 +83,7 @@ typings/
 .dynamodb/
 
 # Ignore built ts files
-dist/**/*
+dist/
 
 # Persistence folder
 db/

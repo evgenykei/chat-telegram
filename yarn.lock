@@ -1091,6 +1091,10 @@ es-to-primitive@^1.2.0:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
+es6-promise@^4.2.4:
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.2.6.tgz#b685edd8258886365ea62b57d30de28fadcd974f"
+
 es7-shim@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/es7-shim/-/es7-shim-6.0.0.tgz#0c430b40b8505ad15570721a8d8dd4eb0c553155"
@@ -1254,6 +1258,13 @@ fill-range@^4.0.0:
     is-number "^3.0.0"
     repeat-string "^1.6.1"
     to-regex-range "^2.1.0"
+
+filter-async-rxjs-pipe@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/filter-async-rxjs-pipe/-/filter-async-rxjs-pipe-0.1.4.tgz#9ced9918fe9a37a5a64173f08d280addf8d0efec"
+  dependencies:
+    es6-promise "^4.2.4"
+    rxjs "^6.0.0"
 
 find-cache-dir@^2.0.0:
   version "2.1.0"
@@ -3016,7 +3027,7 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
-rxjs@^6.3.3, rxjs@^6.4.0:
+rxjs@^6.0.0, rxjs@^6.3.3, rxjs@^6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.4.0.tgz#f3bb0fe7bda7fb69deac0c16f17b50b0b8790504"
   dependencies:
