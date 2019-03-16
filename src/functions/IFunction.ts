@@ -2,6 +2,11 @@ import IBot from '../bot/IBot'
 import Node from '../menu/Node'
 import LocaleService from '../services/locale/LocaleService'
 
-type IFunction = (body: MessageBody, node: Node, bot: IBot, localeService: LocaleService) => void
+export type IFunction = (body: IFunctionBody) => void
 
-export default IFunction
+export interface IFunctionBody {
+  messageBody: MessageBody,
+  node: Node,
+  bot: IBot,
+  localeService: LocaleService
+}

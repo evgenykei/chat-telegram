@@ -1,4 +1,5 @@
 process.env.NTBA_FIX_319 = '1'
+process.env.NTBA_FIX_350 = '1'
 
 import { filterByPromise } from 'filter-async-rxjs-pipe'
 import * as _ from 'lodash'
@@ -6,10 +7,13 @@ import * as TelegramBot from 'node-telegram-bot-api'
 import { InlineKeyboard } from 'node-telegram-keyboard-wrapper'
 import { fromEventPattern, Observable, Subject } from 'rxjs'
 import { filter, map, tap } from 'rxjs/operators'
+import { Stream } from 'stream'
 
 import Node from '../menu/Node'
 import Access from '../services/auth/Access'
 import AuthService from '../services/auth/AuthService'
+import FileBody from '../services/file/FileBody'
+import FileService from '../services/file/FileService'
 import LocaleService from '../services/locale/LocaleService'
 import IBot from './IBot'
 
@@ -18,11 +22,13 @@ export default class NodeTelegramBot implements IBot {
   private bot: TelegramBot
   private localeService: LocaleService
   private authService: AuthService
+  private fileService: FileService
 
-  constructor(token: string, localeService: LocaleService, authService: AuthService) {
+  constructor(token: string, localeService: LocaleService, authService: AuthService, fileService: FileService) {
     this.bot = new TelegramBot(token, {polling: true})
     this.localeService = localeService
     this.authService = authService
+    this.fileService = fileService
 
     /* this.bot.onText(/\/inlineKeyboard/i, msg => {
       if (msg.from) this.bot.sendMessage(msg.from.id, 'This is a message with an inline keyboard.', keyboard.build())
@@ -40,6 +46,15 @@ export default class NodeTelegramBot implements IBot {
 
   public async sendText(chatId: number, textId: string): Promise<void> {
     await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId))
+  }
+
+  public async sendDocument(chatId: number, fileName: string): Promise<void> {
+    const file = await this.fileService.getFile(fileName)
+    if (file instanceof FileBody) {
+      const { filename, contentType } = file
+      const result = await this.bot.sendDocument(chatId, file.stream, {}, { filename, contentType})
+      if (result.document) await this.fileService.cacheFile(fileName, result.document.file_id)
+    } else await this.bot.sendDocument(chatId, file)
   }
 
   public async createMenu(chatId: number, textId: string, nodes: Node[]): Promise<void> {

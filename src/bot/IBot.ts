@@ -1,10 +1,12 @@
 import { Observable } from 'rxjs'
+import { Stream } from 'stream'
 
 import Node from '../menu/Node'
 import Access from '../services/auth/Access'
 
 interface IBot {
   sendText(chatId: number, textId: string): Promise<void>
+  sendDocument(chatId: number, fileName: string): Promise<void>
 
   createMenu(chatId: number, textId: string, nodes: Node[]): Promise<void>
   updateMenu(chatId: number, messageId: number, nodes: Node[], textId?: string): Promise<void>

@@ -1,4 +1,4 @@
-import IFunction from '../functions/IFunction'
+import { IFunction } from '../functions/IFunction'
 
 class Node {
   public readonly id: string

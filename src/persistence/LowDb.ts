@@ -17,6 +17,7 @@ class LowDb implements IDatabase {
     this.db = await low(this.adapter)
     await this.db.defaults<IMainSchema>({
       chats: [],
+      files: [],
     }).write()
   }
 
@@ -36,6 +37,21 @@ class LowDb implements IDatabase {
 
   public chatDelete(chatId: number): Promise<void> {
     return this.delete<IChatSchema>('chats', { chatId })
+  }
+
+  public fileCreate(file: IFileSchema): Promise<void> {
+    return this.create<IFileSchema>('files', file)
+  }
+
+  public fileRead(hash: string): Promise<IFileSchema | undefined> {
+    return this.read<IFileSchema>('files', { hash })
+  }
+
+  public fileUpdate(hash: string, fileId: string): Promise<void> {
+    return this.update<IFileSchema>('files', { hash }, { hash, fileId })
+  }
+  public fileDelete(hash: string): Promise<void> {
+    return this.delete<IFileSchema>('files', { hash })
   }
 
   // Private methods
