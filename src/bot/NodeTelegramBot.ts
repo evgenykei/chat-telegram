@@ -47,9 +47,16 @@ export default class NodeTelegramBot implements IBot {
     await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId), keyboard.build())
   }
 
-  public async updateMenu(chatId: number, messageId: number, nodes: Node[]): Promise<void> {
-    const keyboard = await this.createInlineKeyboard(chatId, nodes)
-    await this.bot.editMessageReplyMarkup(keyboard.extract() as TelegramBot.InlineKeyboardMarkup, {
+  public async updateMenu(chatId: number, messageId: number, nodes: Node[], textId?: string): Promise<void> {
+    const keyboard = (await this.createInlineKeyboard(chatId, nodes))
+      .extract() as TelegramBot.InlineKeyboardMarkup
+
+    if (textId) await this.bot.editMessageText(await this.localeService.localizeText(chatId, textId), {
+      chat_id: chatId,
+      message_id: messageId,
+      reply_markup: keyboard,
+    })
+    else await this.bot.editMessageReplyMarkup(keyboard, {
       chat_id: chatId,
       message_id: messageId,
     })

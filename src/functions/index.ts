@@ -60,6 +60,6 @@ export const setLanguage: IFunction = async (body: MessageBody, node: Node, bot:
 
   if (body.callbackQueryId)
     await bot.answerCallbackQuery(body.chatId, body.callbackQueryId, changed ? 'text.languageChanged' : undefined)
-  if (changed && node.parent)
-    await sendSubmenu(body, node.parent, bot, lm)
+  if (changed && body.messageId && node.parent && node.parent.children )
+    bot.updateMenu(body.chatId, body.messageId, node.parent.children, 'text.menu')
 }

@@ -7,7 +7,7 @@ interface IBot {
   sendText(chatId: number, textId: string): Promise<void>
 
   createMenu(chatId: number, textId: string, nodes: Node[]): Promise<void>
-  updateMenu(chatId: number, messageId: number, nodes: Node[]): Promise<void>
+  updateMenu(chatId: number, messageId: number, nodes: Node[], textId?: string): Promise<void>
   answerCallbackQuery(chatId: number, callbackQueryId: string, textId?: string): Promise<void>
 
   onText(regexp: RegExp, access: Access): Observable<MessageBody>
