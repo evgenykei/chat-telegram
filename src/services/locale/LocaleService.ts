@@ -26,7 +26,7 @@ class LocaleService {
   }
 
   public async localizeText(chatId: number, textId: string): Promise<string> {
-    const locale = this.locales[await this.getChatLocale(chatId) || this.defaultLocale],
+    const locale = this.locales[await this.getChatLocaleName(chatId) || this.defaultLocale],
           text = locale.elements[textId]
     return text ? text : textId
   }
@@ -39,7 +39,7 @@ class LocaleService {
     return Promise.all(promises)
   }
 
-  public async getChatLocale(chatId: number): Promise<string | undefined> {
+  public async getChatLocaleName(chatId: number): Promise<string | undefined> {
     const chat = await this.db.chatRead(chatId)
     if (!chat) return
     let localeName = chat.localeName
@@ -50,6 +50,11 @@ class LocaleService {
     }
 
     return localeName
+  }
+
+  public async getChatLocale(chatId: number): Promise<Locale | undefined> {
+    const localeName = await this.getChatLocaleName(chatId)
+    return localeName ? this.locales[localeName] : undefined
   }
 
   public async setChatLocale(chatId: number, localeName: string): Promise<boolean> {

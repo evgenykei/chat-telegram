@@ -26,14 +26,12 @@ async function initialize() {
         menu = createMenu(localeService),
         menuMapping = menu.includeChildrenMapping()
 
-  console.log('initialized')
-
   // Configure bot
   if (!menu.children) throw new Error('Menu is empty')
 
   bot.onText(/\/start/i, Access.any).subscribe(async messageBody => {
     try {
-      // check API for chatId
+      // TODO check API for chatId
       if (false) await bot.sendText(messageBody.chatId, 'text.forbidden')
       else {
         await authService.register(messageBody.chatId)

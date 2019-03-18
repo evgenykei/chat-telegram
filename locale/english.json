@@ -1,5 +1,6 @@
 {
   "name": "english",
+  "iso": "en",
   "title": "English 🇺🇸 🇬🇧",
   "elements": {    
     "button.root": "Main menu",

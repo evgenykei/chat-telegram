@@ -57,6 +57,10 @@ export default class NodeTelegramBot implements IBot {
     } else await this.bot.sendDocument(chatId, file)
   }
 
+  public async SendPhoto(chatId: number, stream: Stream): Promise<void> {
+    await this.bot.sendPhoto(chatId, stream, {})
+  }
+
   public async createMenu(chatId: number, textId: string, nodes: Node[]): Promise<void> {
     const keyboard = await this.createInlineKeyboard(chatId, nodes)
     await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId), keyboard.build())

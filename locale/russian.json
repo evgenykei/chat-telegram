@@ -1,5 +1,6 @@
 {
   "name": "russian",
+  "iso": "ru",
   "title": "Russian 🇷🇺",
   "elements": {
     "button.root": "Главное меню",

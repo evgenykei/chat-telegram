@@ -90,3 +90,6 @@ db/
 
 # Configuration header file
 config/Config.d.ts
+
+# File for testing
+test.js

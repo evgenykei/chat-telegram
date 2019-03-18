@@ -1,5 +1,8 @@
 import axios from 'axios'
+import * as _ from 'lodash'
+import * as moment from 'moment'
 import * as config from 'node-config-ts'
+import { Stream } from 'stream'
 
 import IBot from '../bot/IBot'
 import Node from '../menu/Node'
@@ -14,40 +17,81 @@ export const sendSubmenu: IFunction = async (body: IFunctionBody) => {
 
 // Получить отчет за неделю
 export const weeklyReport: IFunction = async (body: IFunctionBody) => {
+  const { bot, localeService } = body
   const { chatId, callbackQueryId } = body.messageBody
-  if (callbackQueryId)
-    await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
+  const locale = await localeService.getChatLocale(chatId)
+
+  const pngStream = await axios.get('https://quickchart.io/chart', {
+    responseType: 'stream',
+    params: {
+      c: {
+        type: 'bar',
+        data: {
+          labels: _.range(1, 8).map(it => _.capitalize(moment().locale(locale!.iso).isoWeekday(it).format('dddd'))),
+          datasets: [{
+            label: 'Dogs',
+            data: _.fill(Array(7), 0).map(it => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
+          }, {
+            label: 'Cats',
+            data: _.fill(Array(7), 0).map(it => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
+          }],
+        },
+      },
+    },
+  })
+
+  await bot.SendPhoto(chatId, pngStream.data as Stream)
+  if (callbackQueryId) await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
 // Получить отчет за месяц
 export const monthlyReport: IFunction = async (body: IFunctionBody) => {
+  const { bot } = body
   const { chatId, callbackQueryId } = body.messageBody
-  if (callbackQueryId)
-    await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
+  const daysInMonth = moment().daysInMonth()
+
+  const pngStream = await axios.get('https://quickchart.io/chart', {
+    responseType: 'stream',
+    params: {
+      c: {
+        type: 'bar',
+        data: {
+          labels: _.range(1, daysInMonth + 1),
+          datasets: [{
+            label: 'Dogs and Cats',
+            data: _.fill(Array(daysInMonth), 0).map(it => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
+          }],
+        },
+      },
+    },
+  })
+
+  await bot.SendPhoto(chatId, pngStream.data as Stream)
+  if (callbackQueryId) await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
-// Сбросить пароль
+// Сбросить пароль TODO
 export const resetPassword: IFunction = async (body: IFunctionBody) => {
   const { chatId, callbackQueryId } = body.messageBody
   if (callbackQueryId)
     await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
 }
 
-// Запросить количество дней отпуска
+// Запросить количество дней отпуска TODO
 export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
   const { chatId, callbackQueryId } = body.messageBody
   if (callbackQueryId)
     await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
 }
 
-// Отправить заявку на отпуск
+// Отправить заявку на отпуск TODO
 export const requestVacation: IFunction = async (body: IFunctionBody) => {
   const { chatId, callbackQueryId } = body.messageBody
   if (callbackQueryId)
     await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
 }
 
-// Обратиться в службу поддержки
+// Обратиться в службу поддержки TODO
 export const contactSupport: IFunction = async (body: IFunctionBody) => {
   const { chatId, callbackQueryId } = body.messageBody
   if (callbackQueryId)
@@ -59,10 +103,10 @@ export const getPresentation: IFunction = async (body: IFunctionBody) => {
   const { messageBody, bot, localeService } = body
   const { chatId, callbackQueryId } = messageBody
 
-  const localeName = await localeService.getChatLocale(messageBody.chatId)
-  const presentatioName = `chat_bot_info_${localeName}.pptx`
+  const localeName = await localeService.getChatLocaleName(messageBody.chatId)
+  const presentationName = `chat_bot_info_${localeName}.pptx`
 
-  await bot.sendDocument(messageBody.chatId, presentatioName)
+  await bot.sendDocument(messageBody.chatId, presentationName)
   if (callbackQueryId)
     await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
