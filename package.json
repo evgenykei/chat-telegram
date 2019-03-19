@@ -7,7 +7,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "node-config-ts && tsc",
-    "lint": "tslint"
+    "lint": "tslint -c ./tslint.json -p ./"
   },
   "husky": {
     "hooks": {

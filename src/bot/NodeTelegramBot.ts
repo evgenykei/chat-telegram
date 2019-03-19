@@ -1,6 +1,7 @@
 process.env.NTBA_FIX_319 = '1'
 process.env.NTBA_FIX_350 = '1'
 
+import * as bluebird from 'bluebird'
 import { filterByPromise } from 'filter-async-rxjs-pipe'
 import * as _ from 'lodash'
 import * as TelegramBot from 'node-telegram-bot-api'
@@ -61,12 +62,16 @@ export default class NodeTelegramBot implements IBot {
     await this.bot.sendPhoto(chatId, stream, {})
   }
 
-  public async createMenu(chatId: number, textId: string, nodes: Node[]): Promise<void> {
-    const keyboard = await this.createInlineKeyboard(chatId, nodes)
-    await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId), keyboard.build())
+  public async createMenu(chatId: number, textId: string, nodes: Node[] | Node[][]): Promise<void> {
+    const keyboard = (await this.createInlineKeyboard(chatId, nodes))
+      .extract() as TelegramBot.InlineKeyboardMarkup
+
+    await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId), {
+      reply_markup: keyboard,
+    })
   }
 
-  public async updateMenu(chatId: number, messageId: number, nodes: Node[], textId?: string): Promise<void> {
+  public async updateMenu(chatId: number, messageId: number, nodes: Node[] | Node[][], textId?: string): Promise<void> {
     const keyboard = (await this.createInlineKeyboard(chatId, nodes))
       .extract() as TelegramBot.InlineKeyboardMarkup
 
@@ -112,7 +117,7 @@ export default class NodeTelegramBot implements IBot {
       map(query => ({
         callbackQueryId: query.id,
         chatId: query.from.id,
-        menuId: query.data!,
+        callbackData: query.data!,
         messageId: query.message!.message_id,
       })),
     )
@@ -120,13 +125,19 @@ export default class NodeTelegramBot implements IBot {
 
   // Private methods
 
-  private async createInlineKeyboard(chatId: number, nodes: Node[]): Promise<InlineKeyboard> {
-    const localizeNodes = await this.localeService.localizeNodes(chatId, nodes)
+  private async createInlineKeyboard(chatId: number, nodes: Node[] | Node[][]): Promise<InlineKeyboard> {
     const keyboard = new InlineKeyboard()
-    _.chunk(_.map(localizeNodes, obj => ({
-      callback_data: obj.menuId,
-      text: obj.title,
-    })), this.buttonsPerRow).forEach(chunk => keyboard.addRow(...chunk))
+    const rows = this.isNodeArray(nodes) ? _.chunk(nodes, this.buttonsPerRow) : nodes
+
+    await bluebird.each(rows, row => this.localeService.localizeNodes(chatId, row)
+      .then(localizedRow => keyboard.addRow(...localizedRow)))
+
     return keyboard
+  }
+
+  // Type guards
+
+  private isNodeArray(nodes: Node[] | Node[][]): nodes is Node[] {
+    return nodes[0] instanceof Node
   }
 }

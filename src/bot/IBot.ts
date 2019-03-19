@@ -9,8 +9,8 @@ interface IBot {
   sendDocument(chatId: number, fileName: string): Promise<void>
   SendPhoto(chatId: number, stream: Stream): Promise<void>
 
-  createMenu(chatId: number, textId: string, nodes: Node[]): Promise<void>
-  updateMenu(chatId: number, messageId: number, nodes: Node[], textId?: string): Promise<void>
+  createMenu(chatId: number, textId: string, nodes: Node[] | Node[][]): Promise<void>
+  updateMenu(chatId: number, messageId: number, nodes: Node[] | Node[][], textId?: string): Promise<void>
   answerCallbackQuery(chatId: number, callbackQueryId: string, textId?: string): Promise<void>
 
   onText(regexp: RegExp, access: Access): Observable<MessageBody>

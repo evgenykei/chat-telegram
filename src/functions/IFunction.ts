@@ -8,5 +8,6 @@ export interface IFunctionBody {
   messageBody: MessageBody,
   node: Node,
   bot: IBot,
-  localeService: LocaleService
+  localeService: LocaleService,
+  args?: string[],
 }

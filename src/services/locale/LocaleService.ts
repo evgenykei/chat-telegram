@@ -31,10 +31,10 @@ class LocaleService {
     return text ? text : textId
   }
 
-  public localizeNodes(chatId: number, nodes: Node[]): Promise<ILocalizedNode[]> {
+  public localizeNodes(chatId: number, nodes: Node[]): Promise<KeyboardBody[]> {
     const promises = nodes.map(async node => ({
-      menuId: node.id,
-      title: await this.localizeText(chatId, node.title),
+      callback_data: node.id,
+      text: await this.localizeText(chatId, node.title),
     }))
     return Promise.all(promises)
   }

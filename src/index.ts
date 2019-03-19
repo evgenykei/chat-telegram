@@ -53,13 +53,15 @@ async function initialize() {
 
   bot.onMenuClick(Access.auth).subscribe(async messageBody => {
     try {
-      if (!messageBody.menuId) return
-      const node = menuMapping[messageBody.menuId]
-      if (node.action) node.action({
+      if (!messageBody.callbackData) return
+      const [menuId, argsString] = messageBody.callbackData.split('.')
+      const node = menuMapping[menuId]
+      if (node && node.action) node.action({
         bot,
         localeService,
         messageBody,
         node,
+        args: argsString ? argsString.split(';') : undefined,
       })
     } catch (err) {
       console.error(err)

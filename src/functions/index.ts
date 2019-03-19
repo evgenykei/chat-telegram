@@ -7,6 +7,7 @@ import { Stream } from 'stream'
 import IBot from '../bot/IBot'
 import Node from '../menu/Node'
 import LocaleService from '../services/locale/LocaleService'
+import * as Calendar from './calendar/calendarBuilder'
 import { IFunction, IFunctionBody } from './IFunction'
 
 // Отправить подменю
@@ -79,9 +80,41 @@ export const resetPassword: IFunction = async (body: IFunctionBody) => {
 
 // Запросить количество дней отпуска TODO
 export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
-  const { chatId, callbackQueryId } = body.messageBody
-  if (callbackQueryId)
+  const { args, node, localeService } = body
+  const { chatId, callbackQueryId, messageId } = body.messageBody
+
+  if (!callbackQueryId || !messageId) return
+
+  // send calendar
+  if (!args) {
+    const buttons = _.union(
+      [[new Node(node.parent!.id, 'button.back')]],
+      Calendar.BuildYears(node.id, undefined, new Date()),
+    )
+    body.bot.updateMenu(body.messageBody.chatId, messageId, buttons)
+  }
+  else if (args[0] === 'noaction')
+    await body.bot.answerCallbackQuery(chatId, callbackQueryId)
+  else if (args.length === 1) {
+    const buttons = _.union(
+      [[new Node(node.parent!.id, 'button.back')]],
+      Calendar.BuildYears(node.id, parseInt(args[0], 10), new Date()),
+    )
+    body.bot.updateMenu(body.messageBody.chatId, messageId, buttons)
+  }
+  else if (args.length === 2) {
+    const locale = await localeService.getChatLocale(chatId),
+          iso = locale ? locale.iso : undefined
+    const buttons = _.union(
+      [[new Node(node.parent!.id, 'button.back')]],
+      Calendar.BuildMonths(node.id, iso, parseInt(args[0], 10), new Date()),
+    )
+    body.bot.updateMenu(body.messageBody.chatId, messageId, buttons)
+
+  }
+  else if (args.length === 3)
     await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
+  else throw new Error('Wrong args length')
 }
 
 // Отправить заявку на отпуск TODO
