@@ -100,7 +100,10 @@ export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
 
   // send calendar
   if (!args) {
-    const buttons = Calendar.BuildYears(node, undefined, moment())
+    const locale = await localeService.getChatLocale(chatId),
+          iso = locale ? locale.iso : undefined
+
+    const buttons = Calendar.BuildDays(node, iso, undefined, moment())
     bot.updateMenu(chatId, messageId, buttons)
   }
 
