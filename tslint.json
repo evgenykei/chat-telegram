@@ -14,9 +14,10 @@
     "semicolon": [true, "never"],
     "one-variable-per-declaration": [false],
     "arrow-parens": [true, "ban-single-arg-parens"],
-    "curly": [true, "as-needed"],
+    "curly": [false],
     "no-console": [false],
-    "object-literal-sort-keys": [false]
+    "object-literal-sort-keys": [false],
+    "interface-name": [false]
   },
   "rulesDirectory": []
 }

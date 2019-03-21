@@ -20,6 +20,12 @@
     "text.forbidden": "You have no access to this bot",
     "text.menu": "Select menu item",
     "text.languageChanged": "Language successfuly changed",
-    "text.notImplemented": "This function is not implemented yet"
+    "text.notImplemented": "This function is not implemented yet",
+
+    "text.passwordResetSuccess": "Password has been reset. Your new password: {0}",
+    "text.passwordResetFail": "An error occured while resetting the password. Try again later.",
+
+    "text.vacationDaysSuccess": "Vacation days: {0}",
+    "text.vacationDaysFail": "An error occured while requesting vacation days number. Try again later."
   }
 }

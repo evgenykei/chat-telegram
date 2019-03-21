@@ -20,6 +20,12 @@
     "text.forbidden": "У вас нет доступа к этому боту",
     "text.menu": "Выберите пункт меню",
     "text.languageChanged": "Язык успешно изменён",
-    "text.notImplemented": "Данная функция пока не реализована"
+    "text.notImplemented": "Данная функция пока не реализована",
+
+    "text.passwordResetSuccess": "Пароль успешно сброшен. Новый пароль: {0}",
+    "text.passwordResetFail": "Возникла ошибка во время сброса пароля. Попробуйте позже.",
+
+    "text.vacationDaysSuccess": "Количество дней отпуска: {0}",
+    "text.vacationDaysFail": "Возникла ошибка при запросе количества дней отпуска. Попробуйте позже."
   }
 }

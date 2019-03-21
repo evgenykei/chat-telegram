@@ -25,9 +25,14 @@ class LocaleService {
     if (!this.locales[defaultLocale]) throw new Error('Default locale not found')
   }
 
-  public async localizeText(chatId: number, textId: string): Promise<string> {
-    const locale = this.locales[await this.getChatLocaleName(chatId) || this.defaultLocale],
-          text = locale.elements[textId]
+  public async localizeText(chatId: number, textId: string, textArgs?: string[]): Promise<string> {
+    const locale = this.locales[await this.getChatLocaleName(chatId) || this.defaultLocale]
+    let text = locale.elements[textId]
+
+    if (text && textArgs)
+      for (let i = 0; i < textArgs.length; i++)
+        text = text.replace(`{${i}}`, textArgs[i])
+
     return text ? text : textId
   }
 

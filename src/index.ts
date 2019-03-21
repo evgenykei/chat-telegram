@@ -36,7 +36,7 @@ async function initialize() {
       else {
         await authService.register(messageBody.chatId)
         await bot.sendText(messageBody.chatId, 'text.welcome')
-        await bot.createMenu(messageBody.chatId, 'text.menu', menu.children!)
+        await bot.createMenu(messageBody.chatId, menu.children!, 'text.menu')
       }
     } catch (err) {
       console.error(err)
@@ -45,7 +45,7 @@ async function initialize() {
 
   bot.onText(/\/menu/i, Access.auth).subscribe(async messageBody => {
     try {
-      await bot.createMenu(messageBody.chatId, 'text.menu', menu.children!)
+      await bot.createMenu(messageBody.chatId, menu.children!, 'text.menu')
     } catch (err) {
       console.error(err)
     }

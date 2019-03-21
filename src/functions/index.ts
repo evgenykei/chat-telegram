@@ -1,8 +1,9 @@
 import axios from 'axios'
 import * as _ from 'lodash'
 import * as moment from 'moment'
-import * as config from 'node-config-ts'
+import { config } from 'node-config-ts'
 import { Stream } from 'stream'
+import * as url from 'url'
 
 import IBot from '../bot/IBot'
 import Node from '../menu/Node'
@@ -71,16 +72,28 @@ export const monthlyReport: IFunction = async (body: IFunctionBody) => {
   if (callbackQueryId) await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
-// Сбросить пароль TODO
+// Сбросить пароль
 export const resetPassword: IFunction = async (body: IFunctionBody) => {
-  const { chatId, callbackQueryId } = body.messageBody
-  if (callbackQueryId)
-    await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
+  const { bot } = body
+  const { chatId } = body.messageBody
+
+  try {
+    const req = await axios.get(url.resolve(config.urls.abapTransformer, config.urls.abapResetPasswordFunction), {
+      params: { user_id: chatId },
+    })
+    const data = req.data as ResetPasswordBody
+    if (data.SYSUBRC.trim() !== '0') throw new Error('Remote function finished with error')
+    await bot.sendText(chatId, 'text.passwordResetSuccess', [data.NEWPASS])
+  }
+  catch (err) {
+    console.error(err)
+    await bot.sendText(chatId, 'text.passwordResetFail')
+  }
 }
 
 // Запросить количество дней отпуска
 export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
-  const { args, node, localeService } = body
+  const { args, bot, node, localeService } = body
   const { chatId, callbackQueryId, messageId } = body.messageBody
 
   if (!callbackQueryId || !messageId) return
@@ -88,11 +101,11 @@ export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
   // send calendar
   if (!args) {
     const buttons = Calendar.BuildYears(node, undefined, moment())
-    body.bot.updateMenu(body.messageBody.chatId, messageId, buttons)
+    bot.updateMenu(chatId, messageId, buttons)
   }
 
   else if (args[0] === 'noaction')
-    await body.bot.answerCallbackQuery(chatId, callbackQueryId)
+    await bot.answerCallbackQuery(chatId, callbackQueryId)
 
   // Send years
   else if (args.length === 1) {
@@ -100,7 +113,7 @@ export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
           curDate = moment({ year: argsParsed[0] })
 
     const buttons = Calendar.BuildYears(node, curDate, moment())
-    body.bot.updateMenu(body.messageBody.chatId, messageId, buttons)
+    bot.updateMenu(chatId, messageId, buttons)
   }
 
   // Send months
@@ -111,7 +124,7 @@ export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
           curDate = moment({ year: argsParsed[0] })
 
     const buttons = Calendar.BuildMonths(node, iso, curDate, moment())
-    body.bot.updateMenu(body.messageBody.chatId, messageId, buttons)
+    bot.updateMenu(chatId, messageId, buttons)
   }
 
   // Send days
@@ -122,10 +135,28 @@ export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
           curDate = moment({ year: argsParsed[0], month: argsParsed[1] })
 
     const buttons = Calendar.BuildDays(node, iso, curDate, moment())
-    body.bot.updateMenu(body.messageBody.chatId, messageId, buttons)
+    bot.updateMenu(chatId, messageId, buttons)
   }
-  // Send result TODO
-  else if (args.length === 4) await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
+  // Send result
+  else if (args.length === 4) {
+    const argsParsed = args.map(it => parseInt(it, 10))
+    try {
+      const req = await axios.get(url.resolve(config.urls.abapTransformer, config.urls.abapDaysVacationFunction), {
+        params: {
+          user_id: chatId,
+          dateto: moment({ year: argsParsed[0], month: argsParsed[1], day: argsParsed[2] }).format('YYYYMMDD'),
+        },
+      })
+      const data = req.data as VacationDaysBody
+      if (!data.DAYS.trim()) throw new Error('Remote function finished with error')
+      await bot.sendText(chatId, 'text.vacationDaysSuccess', [data.DAYS.trim()])
+    }
+    catch (err) {
+      console.error(err)
+      await bot.sendText(chatId, 'text.vacationDaysFail')
+    }
+    await body.bot.answerCallbackQuery(chatId, callbackQueryId)
+  }
   else throw new Error('Wrong args length')
 }
 

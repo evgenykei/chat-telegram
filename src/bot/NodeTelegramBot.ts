@@ -31,22 +31,12 @@ export default class NodeTelegramBot implements IBot {
     this.authService = authService
     this.fileService = fileService
 
-    /* this.bot.onText(/\/inlineKeyboard/i, msg => {
-      if (msg.from) this.bot.sendMessage(msg.from.id, 'This is a message with an inline keyboard.', keyboard.build())
-    })
-
-    this.bot.on('callback_query', async query => {
-      await this.bot.answerCallbackQuery(query.id, { text: 'Action received!' })
-      this.bot.sendMessage(query.from.id, 'Hey there! You clicked on an inline button! ;) \
-        So, as you saw, the support library works!')
-    }) */
-
     this.bot.on('polling_error', err => console.log(err))
     this.bot.on('message', message => console.log(JSON.stringify(message, null, 2)))
   }
 
-  public async sendText(chatId: number, textId: string): Promise<void> {
-    await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId))
+  public async sendText(chatId: number, textId: string, textArgs?: string[]): Promise<void> {
+    await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId, textArgs))
   }
 
   public async sendDocument(chatId: number, fileName: string): Promise<void> {
@@ -62,20 +52,24 @@ export default class NodeTelegramBot implements IBot {
     await this.bot.sendPhoto(chatId, stream, {})
   }
 
-  public async createMenu(chatId: number, textId: string, nodes: Node[] | Node[][]): Promise<void> {
+  public async createMenu(chatId: number, nodes: Node[] | Node[][],
+                          textId: string, textArgs?: string[]): Promise<void> {
+
     const keyboard = (await this.createInlineKeyboard(chatId, nodes))
       .extract() as TelegramBot.InlineKeyboardMarkup
 
-    await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId), {
+    await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId, textArgs), {
       reply_markup: keyboard,
     })
   }
 
-  public async updateMenu(chatId: number, messageId: number, nodes: Node[] | Node[][], textId?: string): Promise<void> {
+  public async updateMenu(chatId: number, messageId: number, nodes: Node[] | Node[][],
+                          textId?: string, textArgs?: string[]): Promise<void> {
+
     const keyboard = (await this.createInlineKeyboard(chatId, nodes))
       .extract() as TelegramBot.InlineKeyboardMarkup
 
-    if (textId) await this.bot.editMessageText(await this.localeService.localizeText(chatId, textId), {
+    if (textId) await this.bot.editMessageText(await this.localeService.localizeText(chatId, textId, textArgs), {
       chat_id: chatId,
       message_id: messageId,
       reply_markup: keyboard,
@@ -86,9 +80,11 @@ export default class NodeTelegramBot implements IBot {
     })
   }
 
-  public async answerCallbackQuery(chatId: number, callbackQueryId: string, textId?: string): Promise<void> {
+  public async answerCallbackQuery(chatId: number, callbackQueryId: string,
+                                   textId?: string, textArgs?: string[]): Promise<void> {
+
     await this.bot.answerCallbackQuery(callbackQueryId, {
-      text: textId ? await this.localeService.localizeText(chatId, textId) : undefined,
+      text: textId ? await this.localeService.localizeText(chatId, textId, textArgs) : undefined,
     })
   }
 
