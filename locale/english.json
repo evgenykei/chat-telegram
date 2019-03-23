@@ -22,6 +22,10 @@
     "text.languageChanged": "Language successfuly changed",
     "text.notImplemented": "This function is not implemented yet",
 
+    "text.fileUpload": "Reply to this message with file",
+    "text.fileUploadSuccess": "File successfully uploaded",
+    "text.fileUploadFail": "An error occured while uploading the file. Try again later.",
+
     "text.passwordResetSuccess": "Password has been reset. Your new password: {0}",
     "text.passwordResetFail": "An error occured while resetting the password. Try again later.",
 

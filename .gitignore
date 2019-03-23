@@ -88,6 +88,9 @@ dist/
 # Persistence folder
 db/
 
+# Upload folder
+upload/
+
 # Configuration header file
 config/Config.d.ts
 

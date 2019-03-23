@@ -9,17 +9,23 @@ import FileBody from './FileBody'
 
 const md5Async = bluebird.promisify(md5File)
 
-export default class FileService {
-  private filesPath: string
+export enum FileSource {
+  files, upload,
+}
+
+export class FileService {
+  private sources: string[]
   private db: IDatabase
 
-  constructor(filesPath: string, db: IDatabase) {
-    this.filesPath = filesPath
+  constructor(filesPath: string, uploadPath: string, db: IDatabase) {
+    this.sources = []
+    this.sources[FileSource.files] = filesPath
+    this.sources[FileSource.upload] = uploadPath
     this.db = db
   }
 
-  public async getFile(fileName: string): Promise<string | FileBody> {
-    const filePath = path.join(this.filesPath, fileName)
+  public async getFile(fileName: string, source: FileSource): Promise<string | FileBody> {
+    const filePath = path.join(this.sources[source], fileName)
     if (!await fs.pathExists(filePath)) throw new Error(`File not found: ${filePath}`)
 
     const hash = await md5Async(filePath)
@@ -33,8 +39,8 @@ export default class FileService {
     )
   }
 
-  public async cacheFile(fileName: string, fileId: string): Promise<void> {
-    const filePath = path.join(this.filesPath, fileName)
+  public async cacheFile(fileName: string, source: FileSource, fileId: string): Promise<void> {
+    const filePath = path.join(this.sources[source], fileName)
     if (!await fs.pathExists(filePath)) throw new Error('File not found')
 
     const hash = await md5Async(filePath)
@@ -42,5 +48,22 @@ export default class FileService {
 
     if (record) await this.db.fileUpdate(hash, fileId)
     else await this.db.fileCreate({ hash, fileId })
+  }
+
+  public async saveUpload(stream: Stream, fileId: string, mime?: string, fileName?: string): Promise<string> {
+    const extension = mime ? typeLookup.extension(mime) : undefined
+    if (!fileName) fileName = new Date().getTime().toString() + extension ? `.${extension}` : ''
+    const filePath = path.join(this.sources[FileSource.upload], fileName)
+
+    await new Promise((resolve, reject) => {
+      const write = fs
+        .createWriteStream(filePath)
+        .on('finish', resolve)
+        .on('error', reject)
+      stream.pipe(write)
+    })
+
+    await this.cacheFile(fileName, FileSource.upload, fileId)
+    return fileName
   }
 }

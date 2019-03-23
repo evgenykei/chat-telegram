@@ -5,8 +5,8 @@ import * as bluebird from 'bluebird'
 import { filterByPromise } from 'filter-async-rxjs-pipe'
 import * as _ from 'lodash'
 import * as TelegramBot from 'node-telegram-bot-api'
-import { InlineKeyboard } from 'node-telegram-keyboard-wrapper'
-import { fromEventPattern, Observable, Subject } from 'rxjs'
+import { ForceReply, InlineKeyboard } from 'node-telegram-keyboard-wrapper'
+import { fromEventPattern, Observable } from 'rxjs'
 import { filter, map, tap } from 'rxjs/operators'
 import { Stream } from 'stream'
 
@@ -14,9 +14,11 @@ import Node from '../menu/Node'
 import Access from '../services/auth/Access'
 import AuthService from '../services/auth/AuthService'
 import FileBody from '../services/file/FileBody'
-import FileService from '../services/file/FileService'
+import { FileService, FileSource } from '../services/file/FileService'
 import LocaleService from '../services/locale/LocaleService'
 import IBot from './IBot'
+
+const uploadSessions: {[key: number]: number} = {}
 
 export default class NodeTelegramBot implements IBot {
   private buttonsPerRow = 3
@@ -32,24 +34,51 @@ export default class NodeTelegramBot implements IBot {
     this.fileService = fileService
 
     this.bot.on('polling_error', err => console.log(err))
-    this.bot.on('message', message => console.log(JSON.stringify(message, null, 2)))
+    // this.bot.on('message', message => console.log(JSON.stringify(message, null, 2)))
   }
 
   public async sendText(chatId: number, textId: string, textArgs?: string[]): Promise<void> {
     await this.bot.sendMessage(chatId, await this.localeService.localizeText(chatId, textId, textArgs))
   }
 
-  public async sendDocument(chatId: number, fileName: string): Promise<void> {
-    const file = await this.fileService.getFile(fileName)
+  public async sendDocument(chatId: number, fileName: string, source: FileSource): Promise<void> {
+    const file = await this.fileService.getFile(fileName, source)
     if (file instanceof FileBody) {
       const { filename, contentType } = file
       const result = await this.bot.sendDocument(chatId, file.stream, {}, { filename, contentType})
-      if (result.document) await this.fileService.cacheFile(fileName, result.document.file_id)
+      if (result.document) await this.fileService.cacheFile(fileName, source, result.document.file_id)
     } else await this.bot.sendDocument(chatId, file)
   }
 
-  public async SendPhoto(chatId: number, stream: Stream): Promise<void> {
+  public async sendPhoto(chatId: number, stream: Stream): Promise<void> {
     await this.bot.sendPhoto(chatId, stream, {})
+  }
+
+  public async registerUpload(chatId: number, action: (fileName?: string) => void,
+                              textId: string, textArgs?: string[]): Promise<void> {
+
+    const localizedText = await this.localeService.localizeText(chatId, textId, textArgs)
+    const msg = await this.bot.sendMessage(chatId, localizedText, new ForceReply().build())
+
+    uploadSessions[chatId] = this.bot.onReplyToMessage(chatId, msg.message_id, async (message: TelegramBot.Message) => {
+      try {
+        if (!message.reply_to_message ||
+            message.reply_to_message.message_id !== msg.message_id ||
+            !message.document) return
+
+        this.bot.removeReplyListener(uploadSessions[chatId])
+        delete uploadSessions[chatId]
+
+        const { file_id, mime_type, file_name } = message.document
+        const fileStream = this.bot.getFileStream(file_id)
+        const fileName = await this.fileService.saveUpload(fileStream, file_id, mime_type, file_name)
+        action(fileName)
+      }
+      catch (err){
+        console.error(err)
+        action()
+      }
+    })
   }
 
   public async createMenu(chatId: number, nodes: Node[] | Node[][],

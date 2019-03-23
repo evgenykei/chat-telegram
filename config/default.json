@@ -14,6 +14,8 @@
 
     "abapDaysVacationFunction": "z_bot_daysvacation",
 
+    "abapUserCheckFunction": "z_bot_user_check",
+
     "classifier": "http://localhost:3002/"
   },
 
@@ -25,6 +27,7 @@
   "directories": {
     "db": "db",
     "locale": "locale",
-    "files": "files"
+    "files": "files",
+    "upload": "upload"
   }
 }

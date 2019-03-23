@@ -1,15 +1,14 @@
 import axios from 'axios'
 import * as _ from 'lodash'
 import * as moment from 'moment'
-import { config } from 'node-config-ts'
 import { Stream } from 'stream'
-import * as url from 'url'
 
-import IBot from '../bot/IBot'
-import Node from '../menu/Node'
-import LocaleService from '../services/locale/LocaleService'
+import AbapAPI from '../services/abap/AbapAPI'
+import { FileSource } from '../services/file/FileService'
 import * as Calendar from './calendar/calendarBuilder'
 import { IFunction, IFunctionBody } from './IFunction'
+
+const abapAPI = new AbapAPI()
 
 // Отправить подменю
 export const sendSubmenu: IFunction = async (body: IFunctionBody) => {
@@ -32,17 +31,17 @@ export const weeklyReport: IFunction = async (body: IFunctionBody) => {
           labels: _.range(1, 8).map(it => _.capitalize(moment().locale(locale!.iso).isoWeekday(it).format('dddd'))),
           datasets: [{
             label: 'Dogs',
-            data: _.fill(Array(7), 0).map(it => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
+            data: _.fill(Array(7), 0).map(() => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
           }, {
             label: 'Cats',
-            data: _.fill(Array(7), 0).map(it => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
+            data: _.fill(Array(7), 0).map(() => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
           }],
         },
       },
     },
   })
 
-  await bot.SendPhoto(chatId, pngStream.data as Stream)
+  await bot.sendPhoto(chatId, pngStream.data as Stream)
   if (callbackQueryId) await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
@@ -61,34 +60,33 @@ export const monthlyReport: IFunction = async (body: IFunctionBody) => {
           labels: _.range(1, daysInMonth + 1),
           datasets: [{
             label: 'Dogs and Cats',
-            data: _.fill(Array(daysInMonth), 0).map(it => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
+            data: _.fill(Array(daysInMonth), 0).map(() => Math.floor(Math.random() * (200 - 5 + 1) + 5)),
           }],
         },
       },
     },
   })
 
-  await bot.SendPhoto(chatId, pngStream.data as Stream)
-  if (callbackQueryId) await body.bot.answerCallbackQuery(chatId, callbackQueryId)
+  await bot.sendPhoto(chatId, pngStream.data as Stream)
+  if (callbackQueryId)
+    await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
 // Сбросить пароль
 export const resetPassword: IFunction = async (body: IFunctionBody) => {
   const { bot } = body
-  const { chatId } = body.messageBody
+  const { chatId, callbackQueryId } = body.messageBody
 
   try {
-    const req = await axios.get(url.resolve(config.urls.abapTransformer, config.urls.abapResetPasswordFunction), {
-      params: { user_id: chatId },
-    })
-    const data = req.data as ResetPasswordBody
-    if (data.SYSUBRC.trim() !== '0') throw new Error('Remote function finished with error')
-    await bot.sendText(chatId, 'text.passwordResetSuccess', [data.NEWPASS])
+    const newPassword = await abapAPI.resetPassword(chatId)
+    await bot.sendText(chatId, 'text.passwordResetSuccess', [newPassword])
   }
   catch (err) {
     console.error(err)
     await bot.sendText(chatId, 'text.passwordResetFail')
   }
+  if (callbackQueryId)
+    await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
 // Запросить количество дней отпуска
@@ -144,15 +142,9 @@ export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
   else if (args.length === 4) {
     const argsParsed = args.map(it => parseInt(it, 10))
     try {
-      const req = await axios.get(url.resolve(config.urls.abapTransformer, config.urls.abapDaysVacationFunction), {
-        params: {
-          user_id: chatId,
-          dateto: moment({ year: argsParsed[0], month: argsParsed[1], day: argsParsed[2] }).format('YYYYMMDD'),
-        },
-      })
-      const data = req.data as VacationDaysBody
-      if (!data.DAYS.trim()) throw new Error('Remote function finished with error')
-      await bot.sendText(chatId, 'text.vacationDaysSuccess', [data.DAYS.trim()])
+      const date = moment({ year: argsParsed[0], month: argsParsed[1], day: argsParsed[2] })
+      const vacationDays = await abapAPI.getVacationDays(chatId, date)
+      await bot.sendText(chatId, 'text.vacationDaysSuccess', [vacationDays.toString()])
     }
     catch (err) {
       console.error(err)
@@ -163,18 +155,25 @@ export const requestVacationDays: IFunction = async (body: IFunctionBody) => {
   else throw new Error('Wrong args length')
 }
 
-// Отправить заявку на отпуск TODO
+// Отправить заявку на отпуск
 export const requestVacation: IFunction = async (body: IFunctionBody) => {
+  const { bot } = body
   const { chatId, callbackQueryId } = body.messageBody
+  await bot.sendDocument(chatId, 'application.txt', FileSource.files)
   if (callbackQueryId)
-    await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
+    await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
-// Обратиться в службу поддержки TODO
+// Обратиться в службу поддержки
 export const contactSupport: IFunction = async (body: IFunctionBody) => {
+  const { bot } = body
   const { chatId, callbackQueryId } = body.messageBody
+  await bot.registerUpload(chatId, fileName => {
+    if (fileName) bot.sendText(chatId, 'text.fileUploadSuccess')
+    else bot.sendText(chatId, 'text.fileUploadFail')
+  }, 'text.fileUpload')
   if (callbackQueryId)
-    await body.bot.answerCallbackQuery(chatId, callbackQueryId, 'text.notImplemented')
+    await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }
 
 // Получить презентацию
@@ -185,7 +184,7 @@ export const getPresentation: IFunction = async (body: IFunctionBody) => {
   const localeName = await localeService.getChatLocaleName(messageBody.chatId)
   const presentationName = `chat_bot_info_${localeName}.pptx`
 
-  await bot.sendDocument(messageBody.chatId, presentationName)
+  await bot.sendDocument(messageBody.chatId, presentationName, FileSource.files)
   if (callbackQueryId)
     await body.bot.answerCallbackQuery(chatId, callbackQueryId)
 }

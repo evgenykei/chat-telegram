@@ -22,6 +22,10 @@
     "text.languageChanged": "Язык успешно изменён",
     "text.notImplemented": "Данная функция пока не реализована",
 
+    "text.fileUpload": "Загрузите файл в ответ на это сообщение",
+    "text.fileUploadSuccess": "Файл успешно загружен",
+    "text.fileUploadFail": "Возникла ошибка при загрузке файла",
+
     "text.passwordResetSuccess": "Пароль успешно сброшен. Новый пароль: {0}",
     "text.passwordResetFail": "Возникла ошибка во время сброса пароля. Попробуйте позже.",
 

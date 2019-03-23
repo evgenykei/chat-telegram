@@ -1,14 +1,17 @@
 import * as path from 'path'
 
+import * as fs from 'fs-extra'
+import * as _ from 'lodash'
 import { config } from 'node-config-ts'
 
 import IBot from './bot/IBot'
 import NodeTelegramBot from './bot/NodeTelegramBot'
 import { createMenu } from './menu'
 import { createDb } from './persistence/LowDb'
+import AbapAPI from './services/abap/AbapAPI'
 import Access from './services/auth/Access'
 import AuthService from './services/auth/AuthService'
-import FileService from './services/file/FileService'
+import { FileService } from './services/file/FileService'
 import LocaleService from './services/locale/LocaleService'
 
 async function initialize() {
@@ -16,28 +19,41 @@ async function initialize() {
   config.directories.db = path.join(__dirname, '..', config.directories.db)
   config.directories.locale = path.join(__dirname, '..', config.directories.locale)
   config.directories.files = path.join(__dirname, '..', config.directories.files)
+  config.directories.upload = path.join(__dirname, '..', config.directories.upload)
+
+  await Promise.all(_.keys(config.directories).map(p => fs.ensureDir(p)))
 
   // Initialize modules and classes
   const db: IDatabase = await createDb(config.directories.db),
-        fileService = new FileService(config.directories.files, db),
+        fileService = new FileService(config.directories.files, config.directories.upload, db),
         localeService = new LocaleService(config.directories.locale, config.general.defaultLocale, db),
         authService = new AuthService(db, localeService),
         bot: IBot = new NodeTelegramBot(config.telegram.apiKey, localeService, authService, fileService),
         menu = createMenu(localeService),
-        menuMapping = menu.includeChildrenMapping()
+        menuMapping = menu.includeChildrenMapping(),
+        abapAPI = new AbapAPI()
 
   // Configure bot
   if (!menu.children) throw new Error('Menu is empty')
 
-  bot.onText(/\/start/i, Access.any).subscribe(async messageBody => {
+  bot.onText(/\/start/i, Access.nonauth).subscribe(async messageBody => {
+    const { chatId } = messageBody
     try {
-      // TODO check API for chatId
-      if (false) await bot.sendText(messageBody.chatId, 'text.forbidden')
+      if (!abapAPI.checkUser(chatId)) await bot.sendText(messageBody.chatId, 'text.forbidden')
       else {
         await authService.register(messageBody.chatId)
         await bot.sendText(messageBody.chatId, 'text.welcome')
         await bot.createMenu(messageBody.chatId, menu.children!, 'text.menu')
       }
+    } catch (err) {
+      console.error(err)
+    }
+  })
+
+  bot.onText(/\/start/i, Access.auth).subscribe(async messageBody => {
+    try {
+      await bot.sendText(messageBody.chatId, 'text.welcome')
+      await bot.createMenu(messageBody.chatId, menu.children!, 'text.menu')
     } catch (err) {
       console.error(err)
     }
