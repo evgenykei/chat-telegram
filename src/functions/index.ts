@@ -12,8 +12,12 @@ const abapAPI = new AbapAPI()
 
 // Отправить подменю
 export const sendSubmenu: IFunction = async (body: IFunctionBody) => {
-  if (!body.messageBody.messageId || !body.node.children) return
-  body.bot.updateMenu(body.messageBody.chatId, body.messageBody.messageId, body.node.children)
+  const { bot, messageBody, node } = body
+  const { chatId, messageId } = messageBody
+
+  if (!node.children) return
+  if (messageId) bot.updateMenu(chatId, messageId, node.children)
+  else bot.createMenu(chatId, node.children, 'text.menu')
 }
 
 // Получить отчет за неделю
