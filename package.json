@@ -37,7 +37,7 @@
     "@types/node-telegram-bot-api": "^0.30.4",
     "axios": "^0.18.0",
     "bluebird": "^3.5.3",
-    "filter-async-rxjs-pipe": "^0.1.4",
+    "filter-async-rxjs-pipe": "^0.1.5",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.11",
     "lowdb": "^1.0.0",
