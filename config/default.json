@@ -19,11 +19,6 @@
     "classifier": "http://localhost:3002/"
   },
 
-  "files": {
-    "maxUploadSize": "10485760",
-    "unixFileMode": "0644"
-  },
-
   "directories": {
     "db": "db",
     "locale": "locale",
