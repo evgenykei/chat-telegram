@@ -19,6 +19,7 @@ interface IBot {
   answerCallbackQuery(chatId: number, callbackQueryId: string, textId?: string, textArgs?: string[]): Promise<void>
 
   onText(regexp: RegExp, access: Access): Observable<MessageBody>
+  onPlainText(access: Access): Observable<MessageBody>
   onMenuClick(access: Access): Observable<MessageBody>
 }
 

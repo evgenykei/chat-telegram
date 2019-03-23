@@ -132,6 +132,21 @@ export default class NodeTelegramBot implements IBot {
     )
   }
 
+  public onPlainText(access: Access): Observable<MessageBody> {
+    return fromEventPattern<TelegramBot.Message[]>(
+      handler => this.bot.on('text', handler),
+      handler => this.bot.off('text', handler),
+    ).pipe(
+      map(result => result[0]),
+      filter(message => message.from !== undefined && message.text !== undefined && !message.entities),
+      filterByPromise(message => this.authService.isAuthenticated(message.from!.id, access), false),
+      map(message => ({
+        chatId: message.chat.id,
+        text: message.text || '',
+      })),
+    )
+  }
+
   public onMenuClick(access: Access): Observable<MessageBody> {
     return fromEventPattern<TelegramBot.CallbackQuery>(
       handler => this.bot.on('callback_query', handler),

@@ -30,6 +30,8 @@
     "text.passwordResetFail": "An error occured while resetting the password. Try again later.",
 
     "text.vacationDaysSuccess": "Vacation days: {0}",
-    "text.vacationDaysFail": "An error occured while requesting vacation days number. Try again later."
+    "text.vacationDaysFail": "An error occured while requesting vacation days number. Try again later.",
+
+    "text.classDefined": "The message belongs to class: {0}"
   }
 }

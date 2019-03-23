@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import * as moment from 'moment'
 import { Stream } from 'stream'
 
-import AbapAPI from '../services/abap/AbapAPI'
+import AbapAPI from '../api/abap/AbapAPI'
 import { FileSource } from '../services/file/FileService'
 import * as Calendar from './calendar/calendarBuilder'
 import { IFunction, IFunctionBody } from './IFunction'
