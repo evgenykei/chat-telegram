@@ -167,12 +167,41 @@ export default class NodeTelegramBot implements IBot {
 
   private async createInlineKeyboard(chatId: number, nodes: Node[] | Node[][]): Promise<InlineKeyboard> {
     const keyboard = new InlineKeyboard()
-    const rows = this.isNodeArray(nodes) ? _.chunk(nodes, this.buttonsPerRow) : nodes
 
-    await bluebird.each(rows, row => this.localeService.localizeNodes(chatId, row)
-      .then(localizedRow => keyboard.addRow(...localizedRow)))
+    const buttons = this.isNodeArray(nodes)
+      ? this.arrangeButtons(await this.localeService.localizeNodes(chatId, nodes))
+      : await Promise.all(nodes.map(row => this.localeService.localizeNodes(chatId, row)))
+
+    buttons.forEach(row => keyboard.addRow(...row))
 
     return keyboard
+  }
+
+  private arrangeButtons(buttons: KeyboardBody[]): KeyboardBody[][] {
+    // Map, where key: buttons per row, value: button title length
+    const buttonsMap: {[key: number]: number} = {
+      1: 50,
+      2: 24,
+      3: 15,
+      4: 10,
+      5: 8,
+      6: 6,
+      7: 4,
+    }
+
+    const rows: KeyboardBody[][] = []
+    while (buttons.length > 0) {
+      const popped: KeyboardBody[] = []
+      while (
+        !buttonsMap[buttons.length] ||
+        buttons.some(it => it.text.length > buttonsMap[buttons.length])
+      ) if (buttons.length > 0) popped.unshift(buttons.pop()!)
+      if (buttons.length > 0) rows.push(buttons)
+      else if (popped.length > 0) rows.push([popped.shift()!])
+      buttons = popped
+    }
+
+    return rows
   }
 
   // Type guards
