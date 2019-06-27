@@ -182,11 +182,10 @@ export const contactSupport: IFunction = async (body: IFunctionBody) => {
 
 // Получить презентацию
 export const getPresentation: IFunction = async (body: IFunctionBody) => {
-  const { messageBody, bot, localeService } = body
+  const { messageBody, bot } = body
   const { chatId, callbackQueryId } = messageBody
 
-  const localeName = await localeService.getChatLocaleName(messageBody.chatId)
-  const presentationName = `chat_bot_info_${localeName}.pptx`
+  const presentationName = 'SAP-bot.pdf'
 
   await bot.sendDocument(messageBody.chatId, presentationName, FileSource.files)
   if (callbackQueryId)

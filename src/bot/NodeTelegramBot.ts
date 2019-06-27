@@ -180,13 +180,13 @@ export default class NodeTelegramBot implements IBot {
   private arrangeButtons(buttons: KeyboardBody[]): KeyboardBody[][] {
     // Map, where key: buttons per row, value: button title length
     const buttonsMap: {[key: number]: number} = {
-      1: 50,
-      2: 24,
-      3: 15,
-      4: 10,
-      5: 8,
-      6: 6,
-      7: 4,
+      1: 35,
+      2: 17,
+      3: 12,
+      4: 7,
+      5: 5,
+      6: 4,
+      7: 3,
     }
 
     const rows: KeyboardBody[][] = []
