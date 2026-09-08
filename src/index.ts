@@ -24,12 +24,17 @@ async function initialize() {
 
   await Promise.all(_.keys(config.directories).map(p => fs.ensureDir(p)))
 
+  const telegramApiKey = process.env.TELEGRAM_BOT_TOKEN || config.telegram.apiKey
+  if (!telegramApiKey) {
+    throw new Error('Telegram API key is not configured. Set TELEGRAM_BOT_TOKEN environment variable.')
+  }
+
   // Initialize modules and classes
   const db: IDatabase = await createDb(config.directories.db),
         fileService = new FileService(config.directories.files, config.directories.upload, db),
         localeService = new LocaleService(config.directories.locale, config.general.defaultLocale, db),
         authService = new AuthService(db, localeService),
-        bot: IBot = new NodeTelegramBot(config.telegram.apiKey, localeService, authService, fileService),
+        bot: IBot = new NodeTelegramBot(telegramApiKey, localeService, authService, fileService),
         menu = createMenu(localeService),
         menuMapping = menu.includeChildrenMapping(),
         abapAPI = new AbapAPI(),
